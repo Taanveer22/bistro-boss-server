@@ -24,6 +24,7 @@ const client = new MongoClient(
 const database = client.db("bistroBossDB");
 const menusCollection = database.collection("menus");
 const reviewsCollection = database.collection("reviews");
+const cartsCollection = database.collection("carts");
 
 // ===== STEP 6: Function to CONNECT to the database =====
 async function connectToMongoDB() {
@@ -47,23 +48,47 @@ app.get("/", (req, res) => {
   res.send("Our server is running!");
 });
 
+// MENUS COLLECTION
 app.get("/menus", async (req, res) => {
   try {
     const menusData = await menusCollection.find().toArray();
     res.send(menusData);
   } catch (error) {
     console.log("Error:", error);
-    res.status(500).send({ message: "menus data read problem" });
+    res.status(500).send({ message: "menus data get problem" });
   }
 });
 
+// REVIEWS COLLECTION
 app.get("/reviews", async (req, res) => {
   try {
     const reviewsData = await reviewsCollection.find().toArray();
     res.send(reviewsData);
   } catch (error) {
     console.log("Error :", error);
-    res.status(500).send({ message: "reviews data read problem" });
+    res.status(500).send({ message: "reviews data get problem" });
+  }
+});
+
+// CARTS COLLECTION
+app.get("/carts", async (req, res) => {
+  try {
+    const cartsData = await cartsCollection.find().toArray();
+    res.send(cartsData);
+  } catch (error) {
+    console.log("Error :", error);
+    res.status(500).send({ message: "carts data get problem" });
+  }
+});
+
+app.post("/carts", async (req, res) => {
+  try {
+    const cartItem = req.body;
+    const result = await cartsCollection.insertOne(cartItem);
+    res.send(result);
+  } catch (error) {
+    console.log("Error :", error);
+    res.status(500).send({ message: "carts data get problem" });
   }
 });
 
@@ -71,7 +96,7 @@ app.get("/reviews", async (req, res) => {
 async function startServer() {
   try {
     // 1st: connect to the database
-    await connectToMongoDB(); 
+    await connectToMongoDB();
 
     app.listen(port, () => {
       // 2nd: start the server
@@ -79,7 +104,7 @@ async function startServer() {
     });
   } catch (error) {
     // stop the program if something failed
-    process.exit(1); 
+    process.exit(1);
   }
 }
 
