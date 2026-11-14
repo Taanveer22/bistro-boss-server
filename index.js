@@ -43,7 +43,7 @@ async function disconnectFromMongoDB() {
   await client.close();
 }
 
-// ===== STEP 8: Routes (the URLs your server answers) =====
+// ===== STEP 8: Routes (the URLs our server answers) =====
 app.get("/", (req, res) => {
   res.send("Our server is running!");
 });
@@ -73,7 +73,9 @@ app.get("/reviews", async (req, res) => {
 // CARTS COLLECTION
 app.get("/carts", async (req, res) => {
   try {
-    const cartsData = await cartsCollection.find().toArray();
+    // "?email=" have to match req.query.email
+    const query = { customerEmail: req.query.email };
+    const cartsData = await cartsCollection.find(query).toArray();
     res.send(cartsData);
   } catch (error) {
     console.log("Error :", error);
