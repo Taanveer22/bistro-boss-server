@@ -1,7 +1,7 @@
 // ===== STEP 1: Import the tools we need =====
 import express from "express";
 import cors from "cors";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import dotenv from "dotenv";
 
 // ===== STEP 2: Read the .env file =====
@@ -22,9 +22,9 @@ const client = new MongoClient(
 
 // global declaretion of database and collections
 const database = client.db("bistroBossDB");
-const menusCollection = database.collection("menus");
-const reviewsCollection = database.collection("reviews");
-const cartsCollection = database.collection("carts");
+let menusCollection = database.collection("menus");
+let reviewsCollection = database.collection("reviews");
+let cartsCollection = database.collection("carts");
 
 // ===== STEP 6: Function to CONNECT to the database =====
 async function connectToMongoDB() {
@@ -54,7 +54,7 @@ app.get("/menus", async (req, res) => {
     const menusData = await menusCollection.find().toArray();
     res.send(menusData);
   } catch (error) {
-    console.log("Error:", error);
+    console.log("Error getting menus data :", error);
     res.status(500).send({ message: "menus data get problem" });
   }
 });
@@ -65,7 +65,7 @@ app.get("/reviews", async (req, res) => {
     const reviewsData = await reviewsCollection.find().toArray();
     res.send(reviewsData);
   } catch (error) {
-    console.log("Error :", error);
+    console.log("Error getting reviews data :", error);
     res.status(500).send({ message: "reviews data get problem" });
   }
 });
@@ -78,7 +78,7 @@ app.get("/carts", async (req, res) => {
     const cartsData = await cartsCollection.find(query).toArray();
     res.send(cartsData);
   } catch (error) {
-    console.log("Error :", error);
+    console.log("Error getting carts data :", error);
     res.status(500).send({ message: "carts data get problem" });
   }
 });
@@ -89,8 +89,19 @@ app.post("/carts", async (req, res) => {
     const result = await cartsCollection.insertOne(cartItem);
     res.send(result);
   } catch (error) {
-    console.log("Error :", error);
+    console.log("Error posting carts data :", error);
     res.status(500).send({ message: "carts data get problem" });
+  }
+});
+
+app.delete("/carts/:id", async (req, res) => {
+  try {
+    const filter = { _id: new ObjectId(req.params.id) };
+    const result = await cartsCollection.deleteOne(filter);
+    res.send(result);
+  } catch (error) {
+    console.log("Error deleting carts data :", error);
+    res.status(500).send({ message: "carts data delete problem" });
   }
 });
 
