@@ -22,6 +22,7 @@ const client = new MongoClient(
 
 // global declaretion of database and collections
 const database = client.db("bistroBossDB");
+let usersCollection = database.collection("users");
 let menusCollection = database.collection("menus");
 let reviewsCollection = database.collection("reviews");
 let cartsCollection = database.collection("carts");
@@ -46,6 +47,18 @@ async function disconnectFromMongoDB() {
 // ===== STEP 8: Routes (the URLs our server answers) =====
 app.get("/", (req, res) => {
   res.send("Our server is running!");
+});
+
+// USERS COLLECTION
+app.post("/users", async (req, res) => {
+  try {
+    const userDoc = req.body;
+    const result = await usersCollection.insertOne(userDoc);
+    res.send(result);
+  } catch (error) {
+    console.log("Error posting users data :", error);
+    res.status(500).send({ message: "users data post problem" });
+  }
 });
 
 // MENUS COLLECTION
