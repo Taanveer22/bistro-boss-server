@@ -46,12 +46,18 @@ async function disconnectFromMongoDB() {
 
 // ===== STEP 8: Routes (the URLs our server answers) =====
 app.get("/", (req, res) => {
-  res.send("Our server is running!");
+  res.send("Bistro boss server is running!");
 });
 
 // USERS COLLECTION
 app.post("/users", async (req, res) => {
   try {
+    const query = { email: req.body.email };
+    const existingUser = await usersCollection.findOne(query);
+    if (existingUser) {
+      return res.send({ message: "user already exist", userId: null });
+    }
+
     const userDoc = req.body;
     const result = await usersCollection.insertOne(userDoc);
     res.send(result);
