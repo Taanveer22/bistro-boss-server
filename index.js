@@ -77,6 +77,17 @@ app.post("/users", async (req, res) => {
   }
 });
 
+app.delete("/users/:id", async (req, res) => {
+  try {
+    const filter = { _id: new ObjectId(req.params.id) };
+    const result = await usersCollection.deleteOne(filter);
+    res.send(result);
+  } catch (error) {
+    console.log("Error deleting users data :", error);
+    res.status(500).send({ message: "users data delete problem" });
+  }
+});
+
 // MENUS COLLECTION
 app.get("/menus", async (req, res) => {
   try {
