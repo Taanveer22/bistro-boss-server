@@ -50,6 +50,16 @@ app.get("/", (req, res) => {
 });
 
 // USERS COLLECTION
+app.get("/users", async (req, res) => {
+  try {
+    const result = await usersCollection.find().toArray();
+    res.send(result);
+  } catch (error) {
+    console.log("Error getting users data :", error);
+    res.status(500).send({ message: "users data get problem" });
+  }
+});
+
 app.post("/users", async (req, res) => {
   try {
     const query = { email: req.body.email };
