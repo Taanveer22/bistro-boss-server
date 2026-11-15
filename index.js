@@ -77,6 +77,22 @@ app.post("/users", async (req, res) => {
   }
 });
 
+app.patch("/users/admin/:id", async (req, res) => {
+  try {
+    const filter = { _id: new ObjectId(req.params.id) };
+    const updateDoc = {
+      $set: {
+        role: "admin",
+      },
+    };
+    const result = await usersCollection.updateOne(filter, updateDoc);
+    res.send(result);
+  } catch (error) {
+    console.log("Error patching users data :", error);
+    res.status(500).send({ message: "users data patch problem" });
+  }
+});
+
 app.delete("/users/:id", async (req, res) => {
   try {
     const filter = { _id: new ObjectId(req.params.id) };
